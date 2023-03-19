@@ -4,5 +4,5 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 @Transactional
-public interface PilotBasicRepositoryInterface extends JpaRepository<PilotBasicModel, Long> {
+public interface PilotBasicRepositoryQueryInterface extends JpaRepository<PilotBasicQueryModel, Long> {
 }

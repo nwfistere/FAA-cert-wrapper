@@ -1,11 +1,12 @@
 package com.nickfistere.airmendatabase.airmencertification.PilotBasic;
 
 import com.nickfistere.airmendatabase.airmencertification.NonPilotBasic.NonPilotBasicModel;
-import com.nickfistere.airmendatabase.airmencertification.NonPilotBasic.NonPilotBasicRepositoryInterface;
+import com.nickfistere.airmendatabase.airmencertification.importDb.NonPilotBasicRepositoryInterface;
 import com.nickfistere.airmendatabase.airmencertification.NonPilotCert.NonPilotCertModel;
 import com.nickfistere.airmendatabase.airmencertification.NonPilotCert.NonPilotCertRepositoryInterface;
 import com.nickfistere.airmendatabase.airmencertification.PilotCert.PilotCertModel;
 import com.nickfistere.airmendatabase.airmencertification.PilotCert.PilotCertRepositoryInterface;
+import com.nickfistere.airmendatabase.airmencertification.importDb.PilotBasicRepositoryInterface;
 import com.nickfistere.airmendatabase.airmencertification.util.CsvUtil;
 import com.nickfistere.airmendatabase.airmencertification.importDb.ImportRequest;
 import org.springframework.beans.factory.annotation.Autowired;
