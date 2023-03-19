@@ -8,10 +8,4 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "Non_Pilot_Basic")
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class NonPilotBasicModel extends BasicModel {
-
-//    @OneToMany
-//    @JoinColumn(name="uniqueId")
-//    @JsonProperty
-//    private Set<NonPilotCertModel> certificates = new HashSet<>();
-}
+public class NonPilotBasicModel extends BasicModel {}

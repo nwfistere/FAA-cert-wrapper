@@ -16,7 +16,6 @@ import java.util.Set;
 @Table(name = "Pilot_Basic")
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class PilotBasicQueryModel extends BasicModel {
-
     @OneToMany
     @JoinColumn(name="uniqueId")
     @JsonProperty

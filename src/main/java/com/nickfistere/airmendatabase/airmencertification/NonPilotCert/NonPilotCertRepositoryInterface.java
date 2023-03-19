@@ -4,5 +4,4 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 @Transactional
-public interface NonPilotCertRepositoryInterface extends JpaRepository<NonPilotCertModel, Long> {
-}
+public interface NonPilotCertRepositoryInterface extends JpaRepository<NonPilotCertModel, Long> {}

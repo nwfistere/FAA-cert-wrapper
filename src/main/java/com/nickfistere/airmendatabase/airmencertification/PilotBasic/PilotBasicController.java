@@ -32,4 +32,15 @@ public class PilotBasicController {
         return new ResponseEntity<>(pilotBasicQueryRepository.findAll(pageable), HttpStatus.OK);
     }
 
+    @GetMapping("/pilots-advanced")
+    ResponseEntity<Page<PilotBasicQueryModel>> getPilots(
+            @RequestParam Optional<Integer> page,
+            @RequestParam Optional<Integer> size,
+            @RequestParam Optional<String> sort
+    ) {
+        Pageable pageable = PageRequest.of(page.orElse(0), size.orElse(10),
+                Sort.by(sort.orElse("uniqueId")));
+        return new ResponseEntity<>(pilotBasicQueryRepository.findAll(pageable), HttpStatus.OK);
+    }
+
 }
