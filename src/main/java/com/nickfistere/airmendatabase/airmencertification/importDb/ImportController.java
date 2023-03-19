@@ -1,11 +1,12 @@
 package com.nickfistere.airmendatabase.airmencertification.PilotBasic;
 
-import com.nickfistere.airmendatabase.airmencertification.NonPilotBasic.NonPilotBasicModel;
+import com.nickfistere.airmendatabase.airmencertification.importDb.NonPilotBasicModel;
 import com.nickfistere.airmendatabase.airmencertification.importDb.NonPilotBasicRepositoryInterface;
 import com.nickfistere.airmendatabase.airmencertification.NonPilotCert.NonPilotCertModel;
 import com.nickfistere.airmendatabase.airmencertification.NonPilotCert.NonPilotCertRepositoryInterface;
 import com.nickfistere.airmendatabase.airmencertification.PilotCert.PilotCertModel;
 import com.nickfistere.airmendatabase.airmencertification.PilotCert.PilotCertRepositoryInterface;
+import com.nickfistere.airmendatabase.airmencertification.importDb.PilotBasicModel;
 import com.nickfistere.airmendatabase.airmencertification.importDb.PilotBasicRepositoryInterface;
 import com.nickfistere.airmendatabase.airmencertification.util.CsvUtil;
 import com.nickfistere.airmendatabase.airmencertification.importDb.ImportRequest;
@@ -33,7 +34,7 @@ public class ImportController {
     NonPilotCertRepositoryInterface nonPilotCertRepository;
 
     @PostMapping("/import")
-    ResponseEntity<List<PilotBasicModel>> importDb(@RequestBody ImportRequest importRequest) throws IOException {
+    ResponseEntity<String> importDb(@RequestBody ImportRequest importRequest) throws IOException {
         String pilotBasicPath = importRequest.getPilotBasicPath();
         String pilotCertPath = importRequest.getPilotCertPath();
         String nonPilotBasicPath = importRequest.getNonPilotBasicPath();
@@ -59,6 +60,6 @@ public class ImportController {
             nonPilotCertRepository.saveAll(models);
         }
 
-        return new ResponseEntity<>(null, HttpStatus.OK);
+        return new ResponseEntity<>("Done", HttpStatus.OK);
     }
 }
