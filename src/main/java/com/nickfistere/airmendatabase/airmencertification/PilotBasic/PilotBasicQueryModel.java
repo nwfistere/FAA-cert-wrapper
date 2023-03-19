@@ -20,4 +20,12 @@ public class PilotBasicQueryModel extends BasicModel {
     @JoinColumn(name="uniqueId")
     @JsonProperty
     private Set<PilotCertModel> certificates = new HashSet<>();
+
+    public Set<PilotCertModel> getCertificates() {
+        return certificates;
+    }
+
+    public void setCertificates(Set<PilotCertModel> certificates) {
+        this.certificates = certificates;
+    }
 }
