@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class PilotBasicController {
-
     @Autowired
     PilotBasicService pilotBasicService;
 
@@ -21,13 +20,10 @@ public class PilotBasicController {
             PilotBasicQueryModel pilot,
             Pageable page
     ) {
-        ExampleMatcher matcher = ExampleMatcher
-            .matching()
+        ExampleMatcher matcher = ExampleMatcher.matching()
             .withIgnoreCase()
             .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
-
         Example<PilotBasicQueryModel> example = Example.of(pilot, matcher);
-
         return new ResponseEntity<>(pilotBasicService.findPilotsByExample(example, page), HttpStatus.OK);
     }
 

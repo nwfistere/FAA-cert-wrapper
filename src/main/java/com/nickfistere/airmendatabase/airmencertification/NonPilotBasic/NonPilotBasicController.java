@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class NonPilotBasicController {
 
+    static ExampleMatcher matcher = ExampleMatcher.matching()
+            .withIgnoreCase()
+            .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
     @Autowired
     NonPilotBasicService nonPilotBasicService;
 
@@ -22,13 +25,7 @@ public class NonPilotBasicController {
             NonPilotBasicQueryModel nonPilot,
             Pageable page
     ) {
-        ExampleMatcher matcher = ExampleMatcher
-                .matching()
-                .withIgnoreCase()
-                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
-
         Example<NonPilotBasicQueryModel> example = Example.of(nonPilot, matcher);
-
         return new ResponseEntity<>(nonPilotBasicService.findNonPilotsByExample(example, page), HttpStatus.OK);
     }
 
