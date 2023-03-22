@@ -1,0 +1,4 @@
+rootProject.name = 'airmendb'
+include 'src:test:airmencertification.test'
+findProject(':src:test:airmencertification.test')?.name = 'airmencertification.test'
+
