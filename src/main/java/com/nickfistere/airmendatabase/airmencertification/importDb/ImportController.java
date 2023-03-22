@@ -1,15 +1,11 @@
 package com.nickfistere.airmendatabase.airmencertification.PilotBasic;
 
-import com.nickfistere.airmendatabase.airmencertification.importDb.NonPilotBasicModel;
-import com.nickfistere.airmendatabase.airmencertification.importDb.NonPilotBasicRepositoryInterface;
+import com.nickfistere.airmendatabase.airmencertification.importDb.*;
 import com.nickfistere.airmendatabase.airmencertification.NonPilotCert.NonPilotCertModel;
 import com.nickfistere.airmendatabase.airmencertification.NonPilotCert.NonPilotCertRepositoryInterface;
 import com.nickfistere.airmendatabase.airmencertification.PilotCert.PilotCertModel;
 import com.nickfistere.airmendatabase.airmencertification.PilotCert.PilotCertRepositoryInterface;
-import com.nickfistere.airmendatabase.airmencertification.importDb.PilotBasicModel;
-import com.nickfistere.airmendatabase.airmencertification.importDb.PilotBasicRepositoryInterface;
 import com.nickfistere.airmendatabase.airmencertification.util.CsvUtil;
-import com.nickfistere.airmendatabase.airmencertification.importDb.ImportRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,44 +18,11 @@ import java.util.List;
 public class ImportController {
 
     @Autowired
-    PilotBasicRepositoryInterface pilotBasicRepository;
-
-    @Autowired
-    PilotCertRepositoryInterface pilotCertRepository;
-
-    @Autowired
-    NonPilotBasicRepositoryInterface nonPilotBasicRepository;
-
-    @Autowired
-    NonPilotCertRepositoryInterface nonPilotCertRepository;
+    ImportService importService;
 
     @PostMapping("/import")
     ResponseEntity<String> importDb(@RequestBody ImportRequest importRequest) throws IOException {
-        String pilotBasicPath = importRequest.getPilotBasicPath();
-        String pilotCertPath = importRequest.getPilotCertPath();
-        String nonPilotBasicPath = importRequest.getNonPilotBasicPath();
-        String nonPilotCertPath = importRequest.getNonPilotCertPath();
-        if (pilotBasicPath != null && !pilotBasicPath.isEmpty()) {
-            InputStream in = new FileInputStream(pilotBasicPath);
-            List<PilotBasicModel> models = CsvUtil.read(PilotBasicModel.class, in);
-            pilotBasicRepository.saveAll(models);
-        }
-        if (pilotCertPath != null && !pilotCertPath.isEmpty()) {
-            InputStream in = new FileInputStream(pilotCertPath);
-            List<PilotCertModel> models = CsvUtil.readAsArray(PilotCertModel.class, in);
-            pilotCertRepository.saveAll(models);
-        }
-        if (nonPilotBasicPath != null && !nonPilotBasicPath.isEmpty()) {
-            InputStream in = new FileInputStream(nonPilotBasicPath);
-            List<NonPilotBasicModel> models = CsvUtil.read(NonPilotBasicModel.class, in);
-            nonPilotBasicRepository.saveAll(models);
-        }
-        if (nonPilotCertPath != null && !nonPilotCertPath.isEmpty()) {
-            InputStream in = new FileInputStream(nonPilotCertPath);
-            List<NonPilotCertModel> models = CsvUtil.readAsArray(NonPilotCertModel.class, in);
-            nonPilotCertRepository.saveAll(models);
-        }
-
-        return new ResponseEntity<>("Done", HttpStatus.OK);
+        importService.importDb(importRequest);
+        return new ResponseEntity<>("Successfully started import.", HttpStatus.OK);
     }
 }

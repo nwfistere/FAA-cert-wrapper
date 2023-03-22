@@ -17,8 +17,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web-services'
 	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv'
 	runtimeOnly 'org.postgresql:postgresql'
+	testImplementation 'junit:junit:4.13.2'
+	testImplementation 'com.h2database:h2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.instancio:instancio-core:2.11.0'
 }
 
 tasks.named('test') {
