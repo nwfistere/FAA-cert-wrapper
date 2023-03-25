@@ -22,5 +22,5 @@ Converts FAA's public airmen certification csv files to a postgres database with
    - Region name from abbreviation
    - Cert rating name to description
    - Remove redundant data from relations
- - Swagger doc
+ - ~~Swagger doc~~
  - ~~Dockerfile~~
