@@ -1,0 +1,19 @@
+# docker-compose.example.yml
+# Example of a docker compose file for connecting to a
+# postgres database installed on the host system of the docker container
+# This assumes the image is built as nwfistere/airmendb
+version: "3.9"
+services:
+  airmendb:
+    image: nwfistere/airmendb
+    container_name: airmendb
+    environment: # https://docs.docker.com/desktop/networking/#use-cases-and-workarounds-for-all-platforms
+      - POSTGRES_URL=jdbc:postgresql://host.docker.internal:5432/app
+      - POSTGRES_PASSWORD="<password>"
+      - POSTGRES_USERNAME="<username>"
+      - CSV_DESTINATION=./
+      - PORT=8080
+    ports:
+      - "8080:8080" # Expose the port specified in environment.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
