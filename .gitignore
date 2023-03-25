@@ -17,6 +17,9 @@ bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
+### docker-compose ###
+docker-compose.yml
+
 ### IntelliJ IDEA ###
 .idea
 *.iws

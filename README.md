@@ -16,10 +16,11 @@ Converts FAA's public airmen certification csv files to a postgres database with
 
 ### TODO
  - Automatically grab zip file every x days
- - Tests
+ - ~~Tests~~
  - Clean data
    - Split first/middle names
    - Region name from abbreviation
    - Cert rating name to description
    - Remove redundant data from relations
  - Swagger doc
+ - ~~Dockerfile~~

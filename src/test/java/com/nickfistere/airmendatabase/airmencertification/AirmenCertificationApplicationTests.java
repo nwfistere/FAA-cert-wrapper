@@ -13,6 +13,7 @@ import com.nickfistere.airmendatabase.airmencertification.util.ApplicationProper
 import org.instancio.Instancio;
 import org.instancio.Model;
 import org.junit.Assert;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -83,6 +84,29 @@ class AirmenCertificationApplicationTests {
 		nonPilotCertRepositoryInterface.saveAll(Instancio.ofList(nonPilotCertModel).size(10).create());
 		pilotBasicRepositoryInterface.saveAll(pilotModels);
 		pilotCertRepositoryInterface.saveAll(Instancio.ofList(pilotCertModel).size(10).create());
+	}
+
+	@AfterAll
+	static void tearDown(@Autowired ApplicationProperties applicationProperties) {
+		List<String> filesToCleanup = List.of(
+				"NONPILOT_BASIC.csv",
+				"NONPILOT_CERT.csv",
+				"PILOT_BASIC.csv",
+				"PILOT_CERT.csv"
+		);
+		for(String file : filesToCleanup) {
+			File f = new File(applicationProperties.getDestination() + file);
+			if (f.exists()) {
+				try {
+					boolean success = f.delete();
+					if (!success) {
+						throw new RuntimeException();
+					}
+				} catch (Exception e) {
+					Assert.fail("Failed to cleanup files after test.");
+				}
+			}
+		}
 	}
 
 	@Test
