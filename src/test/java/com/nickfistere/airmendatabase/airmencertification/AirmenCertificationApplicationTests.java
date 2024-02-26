@@ -12,18 +12,13 @@ import com.nickfistere.airmendatabase.airmencertification.importDb.*;
 import com.nickfistere.airmendatabase.airmencertification.util.ApplicationProperties;
 import org.instancio.Instancio;
 import org.instancio.Model;
-import org.junit.Assert;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
+import org.instancio.junit.InstancioExtension;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.*;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
@@ -37,9 +32,8 @@ import static org.instancio.Select.field;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = AirmenCertificationApplication.class)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ExtendWith(InstancioExtension.class)
 class AirmenCertificationApplicationTests {
 
 	@Autowired
@@ -103,7 +97,7 @@ class AirmenCertificationApplicationTests {
 						throw new RuntimeException();
 					}
 				} catch (Exception e) {
-					Assert.fail("Failed to cleanup files after test.");
+					Assertions.fail("Failed to cleanup files after test.");
 				}
 			}
 		}
@@ -121,11 +115,11 @@ class AirmenCertificationApplicationTests {
 
 		List<ImportResult> importResults = imports.get(30, TimeUnit.SECONDS);
 
-		Assert.assertEquals(4, importResults.size());
+		Assertions.assertEquals(4, importResults.size());
 
 		for (ImportResult result: importResults) {
-			Assert.assertEquals(result.getPass(), true);
-			Assert.assertNull(result.getException());
+			Assertions.assertEquals(result.getPass(), true);
+			Assertions.assertNull(result.getException());
 		}
 
 	}
@@ -139,11 +133,11 @@ class AirmenCertificationApplicationTests {
 
 		List<ImportResult> importResults = imports.get(30, TimeUnit.SECONDS);
 
-		Assert.assertEquals(1, importResults.size());
+		Assertions.assertEquals(1, importResults.size());
 
 		for (ImportResult result: importResults) {
-			Assert.assertEquals(result.getPass(), false);
-			Assert.assertNotNull(result.getException());
+			Assertions.assertEquals(result.getPass(), false);
+			Assertions.assertNotNull(result.getException());
 		}
 
 	}
@@ -157,8 +151,8 @@ class AirmenCertificationApplicationTests {
 		Example<NonPilotBasicQueryModel> example = Example.of(model, matcher);
 		Page<NonPilotBasicQueryModel> models = nonPilotBasicService.findNonPilotsByExample(example, pageable);
 
-		Assert.assertNotNull(models);
-		Assert.assertEquals(models.getSize(), 10);
+		Assertions.assertNotNull(models);
+		Assertions.assertEquals(models.getSize(), 10);
 	}
 
 	@Test
@@ -170,8 +164,8 @@ class AirmenCertificationApplicationTests {
 		Example<PilotBasicQueryModel> example = Example.of(model, matcher);
 		Page<PilotBasicQueryModel> models = pilotBasicService.findPilotsByExample(example, pageable);
 
-		Assert.assertNotNull(models);
-		Assert.assertEquals(models.getSize(), 10);
+		Assertions.assertNotNull(models);
+		Assertions.assertEquals(models.getSize(), 10);
 	}
 
 }
