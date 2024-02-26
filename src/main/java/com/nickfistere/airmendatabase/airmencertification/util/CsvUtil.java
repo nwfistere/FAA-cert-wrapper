@@ -2,10 +2,12 @@ package com.nickfistere.airmendatabase.airmencertification.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.lang.reflect.Constructor;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
@@ -16,9 +18,10 @@ public class CsvUtil {
     private static final CsvMapper mapper = new CsvMapper()
         .enable(CsvParser.Feature.TRIM_SPACES)
         .enable(CsvParser.Feature.IGNORE_TRAILING_UNMAPPABLE);
-    private static final CsvMapper arrayMapper = new CsvMapper()
+    private static final CsvMapper arrayMapper = (CsvMapper) new CsvMapper()
         .enable(CsvParser.Feature.WRAP_AS_ARRAY)
-        .enable(CsvParser.Feature.TRIM_SPACES);
+        .enable(CsvParser.Feature.TRIM_SPACES)
+        .disable(JsonParser.Feature.AUTO_CLOSE_SOURCE);
 
     public static <T> List<T> read(Class<T> clazz, InputStream stream) throws IOException {
         CsvSchema schema = mapper.schemaFor(clazz).withHeader().withoutQuoteChar().withColumnReordering(true);
@@ -32,6 +35,8 @@ public class CsvUtil {
         // Remove header from list.
         if (rows.hasNext()) {
             rows.next();
+        } else {
+            return new ArrayList<>();
         }
 
         Constructor<T>[] constructors = (Constructor<T>[]) clazz.getConstructors();

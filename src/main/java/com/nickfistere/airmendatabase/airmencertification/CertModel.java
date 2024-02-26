@@ -19,6 +19,10 @@ import java.util.stream.Collectors;
 @MappedSuperclass
 public class CertModel {
 
+    public static final int RatingStartIndex = 6;
+    public static final int RatingEndIndex = 17;
+
+
     protected static final SimpleDateFormat formatter = new SimpleDateFormat("MMddyyyy", Locale.ENGLISH);
 
     public CertModel() {}
@@ -34,7 +38,7 @@ public class CertModel {
         } catch (ParseException e) {
             this.expireDate = null;
         }
-        this.ratings = row.subList(6, 17).stream().filter(StringUtils::isNotEmpty).collect(Collectors.toList());
+        this.ratings = row.subList(RatingStartIndex, RatingEndIndex).stream().filter(StringUtils::isNotEmpty).collect(Collectors.toList());
     }
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

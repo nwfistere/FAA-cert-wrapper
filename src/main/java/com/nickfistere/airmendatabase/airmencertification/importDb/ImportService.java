@@ -4,27 +4,30 @@ import com.nickfistere.airmendatabase.airmencertification.NonPilotCert.NonPilotC
 import com.nickfistere.airmendatabase.airmencertification.PilotCert.PilotCertModel;
 import com.nickfistere.airmendatabase.airmencertification.util.ApplicationProperties;
 import com.nickfistere.airmendatabase.airmencertification.util.CsvUtil;
-import jakarta.persistence.Tuple;
+import com.nickfistere.airmendatabase.airmencertification.util.UnclosableInputStream;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 @Service
 public class ImportService {
+
+    private static final String URL_FORMAT = "https://registry.faa.gov/database/CS%s.zip";
+    private static final String URL_DATE_FORMAT = "MMyyyy";
 
     @Autowired
     ImportRepositoryFactory importRepositoryFactory;
@@ -44,10 +47,17 @@ public class ImportService {
         List<ImportResult> results = new ArrayList<>();
         CompletableFuture<List<ImportResult>> completableFuture = new CompletableFuture<>();
         URL href;
-        List<String> filepaths;
+        List<String> filepaths = new ArrayList<>();
 
         try {
-            href = importRequest.getHref();
+            if (importRequest.getHref().isPresent()) {
+                href = importRequest.getHref().get();
+            } else {
+                // If href is empty, come up with the url ourselves.
+                DateFormat df = new SimpleDateFormat(URL_DATE_FORMAT);
+                String urlString = String.format(URL_FORMAT, df.format(new Date()));
+                href = new URL(urlString);
+            }
         } catch (MalformedURLException malformedURLException) {
             results.add(new ImportResult(malformedURLException,"Href is invalid."));
             completableFuture.complete(results);
@@ -55,27 +65,15 @@ public class ImportService {
         }
 
         try {
-            filepaths = downloadAndUnzipFiles(href, applicationProperties.getDestination());
+            downloadStream(href, filepaths::add, (f, e) -> results.add(new ImportResult(f, e, "Failed to import file.")));
             if (filepaths.isEmpty()) {
                 throw new IOException("No files were unzipped.");
             }
+            filepaths.forEach((f) -> results.add(new ImportResult(f, true)));
         } catch (IOException ioException) {
             results.add(new ImportResult(ioException,"Failed to download and unzip files."));
             completableFuture.complete(results);
             return completableFuture;
-        }
-
-        for (String filepath : filepaths) {
-            boolean success = true;
-            try {
-                importCsv(filepath);
-            } catch (Exception e) {
-                success = false;
-                results.add(new ImportResult(filepath, e, "Failed to import file."));
-            }
-            if (success) {
-                results.add(new ImportResult(filepath, true));
-            }
         }
 
         completableFuture.complete(results);
@@ -83,14 +81,13 @@ public class ImportService {
         return completableFuture;
     }
 
-    private void importCsv(String filepath) throws IOException {
+    private void importCsv(InputStream in, String filepath) throws IOException {
         File file = new File(filepath);
         if (!fileNameToClassMap.containsKey(file.getName())) {
             throw new RuntimeException("Filename:" + file.getName() + " is unexpected.");
         }
 
         List<?> models;
-        InputStream in = new FileInputStream(filepath);
 
         // If the file is a cert file, we need to process the csv differently.
         if (file.getName().contains("CERT")) {
@@ -104,32 +101,24 @@ public class ImportService {
         repo.saveAll(models);
     }
 
-    private List<String> downloadAndUnzipFiles(URL url, String destinationDirectory) throws IOException {
-        List<String> outputFiles = new ArrayList<>();
-        File destination = new File(destinationDirectory);
+    private void downloadStream(URL url, Consumer<String> onSuccess, BiConsumer<String, Exception> onFailure)
+            throws IOException {
 
         ZipInputStream zipInputStream = new ZipInputStream(url.openStream());
         ZipEntry zipEntry;
         while ((zipEntry = zipInputStream.getNextEntry()) != null) {
             // Only process csv files.
             if (!zipEntry.isDirectory() && zipEntry.getName().endsWith("csv")) {
-                String outputFile = destination.getAbsolutePath() + File.separator + zipEntry.getName();
-                extractFile(zipInputStream, outputFile);
-                outputFiles.add(outputFile);
+                try {
+                    importCsv(new UnclosableInputStream(zipInputStream), zipEntry.getName());
+                    onSuccess.accept(zipEntry.getName());
+                } catch (Exception e) {
+                    onFailure.accept(zipEntry.getName(), e);
+                }
             }
             zipInputStream.closeEntry();
         }
         zipInputStream.close();
-        return outputFiles;
     }
 
-    private void extractFile(ZipInputStream zipInputStream, String filePath) throws IOException {
-        BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(filePath));
-        byte[] bytes = new byte[1024];
-        int read;
-        while ((read = zipInputStream.read(bytes)) != -1) {
-            outputStream.write(bytes, 0, read);
-        }
-        outputStream.close();
-    }
 }

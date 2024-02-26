@@ -1,5 +1,7 @@
 package com.nickfistere.airmendatabase.airmencertification;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.nickfistere.airmendatabase.airmencertification.NonPilotBasic.NonPilotBasicQueryModel;
 import com.nickfistere.airmendatabase.airmencertification.NonPilotCert.NonPilotCertModel;
 import com.nickfistere.airmendatabase.airmencertification.NonPilotCert.NonPilotCertRepositoryInterface;
@@ -25,6 +27,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -80,34 +83,11 @@ class AirmenCertificationApplicationTests {
 		pilotCertRepositoryInterface.saveAll(Instancio.ofList(pilotCertModel).size(10).create());
 	}
 
-	@AfterAll
-	static void tearDown(@Autowired ApplicationProperties applicationProperties) {
-		List<String> filesToCleanup = List.of(
-				"NONPILOT_BASIC.csv",
-				"NONPILOT_CERT.csv",
-				"PILOT_BASIC.csv",
-				"PILOT_CERT.csv"
-		);
-		for(String file : filesToCleanup) {
-			File f = new File(applicationProperties.getDestination() + file);
-			if (f.exists()) {
-				try {
-					boolean success = f.delete();
-					if (!success) {
-						throw new RuntimeException();
-					}
-				} catch (Exception e) {
-					Assertions.fail("Failed to cleanup files after test.");
-				}
-			}
-		}
-	}
-
 	@Test
 	void testImportService_Valid() throws Exception {
 
 		File file = ResourceUtils.getFile("classpath:mock.zip");
-		URL mockUrl = file.toURI().toURL();
+		Optional<URL> mockUrl = Optional.of(file.toURI().toURL());
 
 		doReturn(mockUrl).when(importRequest).getHref();
 
