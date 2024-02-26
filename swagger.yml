@@ -1,4 +1,4 @@
-openapi: 3.0.0
+openapi: 3.0.3
 info:
   title: FAA Airmen Certification REST Server
   description: |-
@@ -33,7 +33,7 @@ paths:
               schema:
                 type: array
                 items:
-                  - $ref: '#/components/schemas/PilotBasicModel'
+                  $ref: '#/components/schemas/PilotBasicModel'
   /pilot-certificates:
     get:
       tags:
@@ -48,7 +48,7 @@ paths:
               schema:
                 type: array
                 items:
-                  - $ref: '#/components/schemas/PilotCertModel'
+                  $ref: '#/components/schemas/PilotCertModel'
   /non-pilots:
     get:
       tags:
@@ -63,7 +63,7 @@ paths:
               schema:
                 type: array
                 items:
-                  - $ref: '#/components/schemas/NonPilotBasicModel'
+                  $ref: '#/components/schemas/NonPilotBasicModel'
   /non-pilot-certificates:
     get:
       tags:
@@ -173,7 +173,7 @@ components:
             certificates:
               type: array
               items:
-                - $ref: '#/components/schemas/NonPilotCertModel'
+                $ref: '#/components/schemas/NonPilotCertModel'
     NonPilotCertModel:
       allOf:
         - $ref: '#/components/schemas/CertModel'
@@ -185,7 +185,7 @@ components:
             certificates:
               type: array
               items:
-                - $ref: '#/components/schemas/PilotCertModel'
+                $ref: '#/components/schemas/PilotCertModel'
     PilotCertModel:
       allOf:
         - $ref: '#/components/schemas/CertModel'

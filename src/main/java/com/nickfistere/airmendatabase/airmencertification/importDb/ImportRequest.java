@@ -8,7 +8,6 @@ import java.util.Objects;
 public class ImportRequest {
     private String href;
 
-
     public URL getHref() throws MalformedURLException {
         return new URL(href);
     }
